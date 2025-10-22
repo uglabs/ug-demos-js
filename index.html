@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="theme-color" content="#f6f8f4" />
+    <meta
+      name="description"
+      content="UG Demos JS"
+    />
+    <title>UG Demos</title>
+    <link href="assets/images/favicon.svg" rel="shortcut icon" type="image/x-icon">
+    <script>
+      if (sessionStorage.redirect) {
+        const redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+    
+        history.replaceState(null, null, redirect);
+      }
+    </script>
+  </head>
+  <body style="background-color: #f6f8f4;">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>
