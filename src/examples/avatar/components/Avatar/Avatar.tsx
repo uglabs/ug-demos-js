@@ -91,7 +91,6 @@ export const Avatar: React.FC<AvatarProps> = ({ config, avatarAssets, imageFrame
       const text = textInput;
       setTextInput('');
       await conversationManagerRef.current?.sendText(text);
-      animatedCharacterRef.current?.setAnimation(0, 'body_idle_think', true);
     }
   };
 
