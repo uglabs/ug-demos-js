@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import ExampleTextOnlyAvatarPage from './examples/avatar/ExampleTextOnlyAvatarPage';
 import ExampleVoiceToVoiceAvatarPage from './examples/avatar/ExampleVoiceToVoiceAvatarPage';
 import ExampleChatPage from './examples/chat/ExampleChatPage';
@@ -12,39 +12,55 @@ function App() {
   const [apiConfig, setApiConfig] = useState<ApiConfigData | null>(null);
   const [isApiConfigOpen, setIsApiConfigOpen] = useState(true);
 
+  const handleConfigChange = useCallback((config: ApiConfigData) => {
+    setApiConfig(config);
+    if (config.default_interaction_mode) {
+      if (config.default_interaction_mode === 'avatar-voice') {
+        setPage('voice');
+      } else if (config.default_interaction_mode === 'avatar-text') {
+        setPage('text');
+      } else if (config.default_interaction_mode === 'text-only') {
+        setPage('chat');
+      }
+    }
+  }, []);
+
   return (
     <div className="h-screen flex flex-col">
       <nav className="p-4 bg-gray-100 border-b">
         <div className="max-w-3xl mx-auto flex flex-wrap justify-center items-center gap-4">
-          <div className="flex gap-4">
-            <button
-              onClick={() => setPage('voice')}
-              className={`px-4 py-2 rounded ${
-                page === 'voice' ? 'bg-purple-800 text-white' : 'bg-gray-200 text-black'
-              }`}
-            >
-              Voice-to-Voice Avatar (Beta)
-            </button>
-            <button
-              onClick={() => setPage('text')}
-              className={`px-4 py-2 rounded ${
-                page === 'text' ? 'bg-purple-800 text-white' : 'bg-gray-200 text-black'
-              }`}
-            >
-              Text-Only Avatar
-            </button>
-            <button
-              onClick={() => setPage('chat')}
-              className={`px-4 py-2 rounded ${
-                page === 'chat' ? 'bg-purple-800 text-white' : 'bg-gray-200 text-black'
-              }`}
-            >
-              Chat Example
-            </button>
+          <div className="flex items-center gap-4">
+            <span className="font-semibold">Interaction Mode:</span>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setPage('voice')}
+                className={`px-4 py-2 rounded ${
+                  page === 'voice' ? 'bg-purple-800 text-white' : 'bg-gray-200 text-black'
+                }`}
+              >
+                Avatar Voice
+              </button>
+              <button
+                onClick={() => setPage('text')}
+                className={`px-4 py-2 rounded ${
+                  page === 'text' ? 'bg-purple-800 text-white' : 'bg-gray-200 text-black'
+                }`}
+              >
+                Avatar Text
+              </button>
+              <button
+                onClick={() => setPage('chat')}
+                className={`px-4 py-2 rounded ${
+                  page === 'chat' ? 'bg-purple-800 text-white' : 'bg-gray-200 text-black'
+                }`}
+              >
+                Text Only
+              </button>
+            </div>
           </div>
-          <div className="w-full sm:w-auto sm:ml-auto flex justify-center">
+          <div className="w-full sm:w-auto sm:ml-auto flex justify-end">
             <ApiConfig
-              onConfigChange={setApiConfig}
+              onConfigChange={handleConfigChange}
               isOpen={isApiConfigOpen}
               onToggle={() => setIsApiConfigOpen(!isApiConfigOpen)}
             />

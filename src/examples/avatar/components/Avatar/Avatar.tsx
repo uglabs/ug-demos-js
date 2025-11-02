@@ -21,6 +21,21 @@ import { ApiConfigData } from '../../../components/ApiConfig';
 import { MicIcon } from '../../../components/icons/MicIcon';
 import { MicOffIcon } from '../../../components/icons/MicOffIcon';
 
+interface AnyUtility {
+  enabled: boolean;
+  [key: string]: any;
+}
+
+function getActiveUtilities(utilities?: { [key: string]: AnyUtility } | null): string[] {
+  if (!utilities) {
+    return [];
+  }
+
+  return Object.entries(utilities)
+    .filter(([, utility]) => utility.enabled)
+    .map(([name]) => name);
+}
+
 interface AvatarProps {
   config: ApiConfigData;
   avatarAssets: AvatarAssets;
@@ -90,7 +105,14 @@ export const Avatar: React.FC<AvatarProps> = ({ config, avatarAssets, imageFrame
     if (textInput.trim()) {
       const text = textInput;
       setTextInput('');
-      await conversationManagerRef.current?.sendText(text);
+      const activeUtilities = getActiveUtilities(config.utilities);
+      await conversationManagerRef.current?.interact({
+        uid: '',
+        kind: 'interact',
+        type: 'stream',
+        text: text,
+        on_output: activeUtilities,
+      });
     }
   };
 
@@ -107,6 +129,10 @@ export const Avatar: React.FC<AvatarProps> = ({ config, avatarAssets, imageFrame
       apiKey: config.apiKey,
       federatedId: config.federatedId,
       prompt: config.prompt,
+      context: config.context,
+      utilities: config.utilities,
+      voiceProfile: config.voiceProfile,
+      safetyPolicy: config.safetyPolicy,
       imageFrame,
       inputCapabilities: {
         audio: !isTextOnly,
@@ -251,7 +277,6 @@ export const Avatar: React.FC<AvatarProps> = ({ config, avatarAssets, imageFrame
             }}
           >
             <PlayButton
-              isPaused={isPaused}
               isAudioPlaying={isAudioPlaying}
               isUserSpeaking={isUserSpeaking}
               onClick={handlePlayButtonClick}
