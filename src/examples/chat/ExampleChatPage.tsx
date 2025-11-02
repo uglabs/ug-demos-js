@@ -3,18 +3,37 @@ import {
   ConversationManager,
   ConversationConfig,
   TextEvent,
+  DataEvent,
   ConversationState,
   ConversationError,
 } from 'ug-js-sdk';
 import { PlayButton } from '../components/PlayButton/PlayButton';
 import { ApiConfigData } from '../components/ApiConfig';
 import { useToast } from '../../components/Toast/ToastProvider';
+import { DataMessage } from '../components/DataMessage';
+
+interface AnyUtility {
+  enabled: boolean;
+  [key: string]: any;
+}
+
+function getActiveUtilities(utilities?: { [key: string]: AnyUtility } | null): string[] {
+  if (!utilities) {
+    return [];
+  }
+
+  return Object.entries(utilities)
+    .filter(([, utility]) => utility.enabled)
+    .map(([name]) => name);
+}
 
 type Sender = 'user' | 'chatbot';
 
 interface Message {
-  text: string;
+  text?: string;
+  data?: Record<string, unknown>;
   sender: Sender;
+  type: 'text' | 'data';
 }
 
 interface ExampleChatPageProps {
@@ -50,18 +69,28 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
       apiKey: apiConfig.apiKey,
       federatedId: apiConfig.federatedId,
       prompt: apiConfig.prompt,
+      context: apiConfig.context,
+      utilities: apiConfig.utilities,
+      voiceProfile: apiConfig.voiceProfile,
+      safetyPolicy: apiConfig.safetyPolicy,
       hooks: {
         onTextMessage: (event: TextEvent) => {
           setMessages((prevMessages) => {
             const lastMessage = prevMessages[prevMessages.length - 1];
-            if (lastMessage && lastMessage.sender === 'chatbot') {
+            if (lastMessage && lastMessage.sender === 'chatbot' && lastMessage.type === 'text') {
               const newMessages = [...prevMessages];
-              newMessages[newMessages.length - 1] = { ...lastMessage, text: lastMessage.text + event.text };
+              newMessages[newMessages.length - 1] = { ...lastMessage, text: (lastMessage.text || '') + event.text };
               return newMessages;
             } else {
-              return [...prevMessages, { text: event.text, sender: 'chatbot' }];
+              return [...prevMessages, { type: 'text', text: event.text, sender: 'chatbot' }];
             }
           });
+        },
+        onDataMessage: (event: DataEvent) => {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { type: 'data', data: event.data, sender: 'chatbot' },
+          ]);
         },
         onStateChange: (state: ConversationState) => {},
         onError: (error: ConversationError) => {
@@ -86,8 +115,15 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
 
   const handleSend = () => {
     if (textInput.trim()) {
-      setMessages([...messages, { text: textInput, sender: 'user' }]);
-      conversationManagerRef.current?.sendText(textInput);
+      setMessages([...messages, { type: 'text', text: textInput, sender: 'user' }]);
+      const activeUtilities = getActiveUtilities(apiConfig?.utilities);
+      conversationManagerRef.current?.interact({
+        uid: '',
+        kind: 'interact',
+        type: 'stream',
+        text: textInput,
+        on_output: activeUtilities,
+      });
       setTextInput('');
     }
   };
@@ -127,10 +163,15 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
               <div
                 key={index}
                 className={`py-2 px-4 rounded-2xl max-w-[80%] ${
-                  msg.sender === 'user' ? 'bg-blue-500 text-white self-end' : 'bg-gray-200 text-black self-start'
+                  msg.sender === 'user'
+                    ? 'bg-blue-500 text-white self-end'
+                    : msg.type === 'data'
+                    ? 'bg-purple-100 self-start'
+                    : 'bg-gray-200 text-black self-start'
                 }`}
               >
-                {msg.text}
+                {msg.type === 'text' && msg.text}
+                {msg.type === 'data' && msg.data && <DataMessage data={msg.data} />}
               </div>
             ))}
           </div>
