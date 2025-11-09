@@ -1,6 +1,6 @@
 # Playground
 
-To test locally on safari, the dev server runs on HTTPS by default, which is required for microphone access. 
+To test locally on safari, the dev server runs on HTTPS by default, which is required for microphone access.
 
 When you first access the site at `https://localhost:5173/` (or another port if 5173 is busy), you will need to accept the self-signed SSL certificate in your browser.
 
@@ -46,9 +46,11 @@ Builds the app for production.
 It correctly bundles React in production mode and optimizes the build for performance.
 
 # Libraries
+
 We use @esotericsoftware/spine-player to load up [Spine player](https://en.esotericsoftware.com/spine-player)
 
 # Debugging
+
 For local SDK debugging: Any developer who wants to debug the SDK simply needs to clone the js-sdk repository into the directory next to ug-demos-js.
 
 ```

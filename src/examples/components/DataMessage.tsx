@@ -1,4 +1,4 @@
-import React, { JSX } from 'react';
+import React, { JSX } from 'react'
 
 const renderValue = (value: unknown): JSX.Element => {
   if (typeof value === 'object' && value !== null) {
@@ -11,13 +11,13 @@ const renderValue = (value: unknown): JSX.Element => {
           </div>
         ))}
       </div>
-    );
+    )
   }
-  return <span>{String(value)}</span>;
-};
+  return <span>{String(value)}</span>
+}
 
 interface DataMessageProps {
-  data: Record<string, unknown>;
+  data: Record<string, unknown>
 }
 
 export function DataMessage({ data }: DataMessageProps) {
@@ -32,5 +32,5 @@ export function DataMessage({ data }: DataMessageProps) {
         </div>
       ))}
     </div>
-  );
+  )
 }

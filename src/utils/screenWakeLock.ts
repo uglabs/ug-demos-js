@@ -16,7 +16,7 @@ export class ScreenWakeLock {
       } catch (err) {
         if (err instanceof Error) {
           console.error(`${err.name}, ${err.message}`)
-        }else {
+        } else {
           console.error(err)
         }
       }

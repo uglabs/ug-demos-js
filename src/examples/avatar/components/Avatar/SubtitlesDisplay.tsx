@@ -1,7 +1,7 @@
 'use client'
 
 import React, { CSSProperties } from 'react'
-import { useIsMobile } from '../../../../hooks/useIsMobile';
+import { useIsMobile } from '../../../../hooks/useIsMobile'
 import { WordHighlightEvent } from 'ug-js-sdk'
 
 const HIGHLIGHTED_WORD_STYLES: CSSProperties = {

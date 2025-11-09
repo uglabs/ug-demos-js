@@ -1,5 +1,5 @@
 // Copyright https://lucide.dev/icons/
-import React from 'react';
+import React from 'react'
 
 export const MicOffIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -21,4 +21,4 @@ export const MicOffIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <path d="m2 2 20 20" />
     <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
   </svg>
-);
+)
