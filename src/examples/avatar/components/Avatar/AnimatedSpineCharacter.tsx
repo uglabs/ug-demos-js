@@ -37,7 +37,10 @@ interface AnimatedSpineCharacterProps {
  * Uses spine player and loads an animated character on screen.
  * Exposes an interface that allows to setAnimation to set the character animation
  */
-const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, AnimatedSpineCharacterProps>(
+const AnimatedSpineCharacter = forwardRef<
+  AnimatedSpineCharacterHandle,
+  AnimatedSpineCharacterProps
+>(
   (
     {
       debug,
@@ -49,7 +52,7 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
       isDraggable = false,
       className,
     },
-    ref,
+    ref
   ) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const playerRef = useRef<SpinePlayer | null>(null)
@@ -70,14 +73,14 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
       const onGlobalMouseMove = (e: MouseEvent) => {
         const canvas = playerRef.current?.canvas
         if (!canvas) return
-  
+
         const rect = canvas.getBoundingClientRect()
         const x = (e.clientX - rect.left) / rect.width
         const y = (e.clientY - rect.top) / rect.height
-  
+
         const mappedX = x * 4
         const mappedY = y
-  
+
         mousePosRef.current = { x: mappedX, y: mappedY }
 
         if (!isDraggable || !isDragging) return
@@ -182,7 +185,7 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
           }
           if (skeleton) {
             mouseTrackBone.current = skeleton.findBone('crosshair')
-          // Hide that crosshair bone
+            // Hide that crosshair bone
             if (mouseTrackBone.current) {
               mouseTrackBone.current.active = false
             }
@@ -197,10 +200,10 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
           }
 
           playerRef.current?.animationState?.setAnimation(0, 'body_idle', true)
-        // playerRef.current?.animationState?.setAnimation(1, "aim", true)
+          // playerRef.current?.animationState?.setAnimation(1, "aim", true)
         },
         frame: (player, delta) => {
-        // Update crosshair bones according to mouse position
+          // Update crosshair bones according to mouse position
           const mouse = mousePosRef.current
           const skeleton = player.skeleton
           const canvas = player.canvas
@@ -211,7 +214,7 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
 
           if (!mouseTrackBone.current) return
 
-        // Convert mouse position to normalized device coordinates (-1 to 1)
+          // Convert mouse position to normalized device coordinates (-1 to 1)
           const ndcX = mouse.x * 2 - 1
           const ndcY = (1 - mouse.y) * 2 - 1
 
@@ -231,34 +234,37 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
     }, [avatarAssets])
 
     // Start test animations if debug is true
-  useEffect(() => {
-    if (debug && playerRef.current) {
-      const timeForEachAnimation = 3000
-      const animations = playerRef.current!.animationState!.data.skeletonData.animations
+    useEffect(() => {
+      if (debug && playerRef.current) {
+        const timeForEachAnimation = 3000
+        const animations = playerRef.current!.animationState!.data.skeletonData.animations
 
-      let currentIndex = 0
+        let currentIndex = 0
 
-      const playNextAnimation = () => {
-        if (!playerRef.current) return
+        const playNextAnimation = () => {
+          if (!playerRef.current) return
 
-        const animation = animations[currentIndex]
-        console.debug(`[Animated Spine Character] Playing ${animation.name}`)
-        playerRef.current!.setAnimation(animation.name, true)
-        currentIndex = (currentIndex + 1) % animations.length
-        setTimeout(playNextAnimation, timeForEachAnimation)
+          const animation = animations[currentIndex]
+          console.debug(`[Animated Spine Character] Playing ${animation.name}`)
+          playerRef.current!.setAnimation(animation.name, true)
+          currentIndex = (currentIndex + 1) % animations.length
+          setTimeout(playNextAnimation, timeForEachAnimation)
+        }
+
+        playNextAnimation()
       }
+    }, [debug, playerRef.current])
 
-      playNextAnimation()
-    }
-  }, [debug, playerRef.current])
-
-  useImperativeHandle(ref, () => ({
-    setAnimation: (trackIndex: number, name: string, loop = true) => {
+    useImperativeHandle(ref, () => ({
+      setAnimation: (trackIndex: number, name: string, loop = true) => {
         if (debug) {
           return
         }
         if (!availableAnimations.includes(name)) {
-          console.warn(`Animation "${name}" not found in available animations:`, availableAnimations)
+          console.warn(
+            `Animation "${name}" not found in available animations:`,
+            availableAnimations
+          )
           return
         }
         const current = playerRef.current?.animationState?.getCurrent(trackIndex)
@@ -274,7 +280,10 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
           return
         }
         if (!availableAnimations.includes(name)) {
-          console.warn(`Animation "${name}" not found in available animations:`, availableAnimations)
+          console.warn(
+            `Animation "${name}" not found in available animations:`,
+            availableAnimations
+          )
           return
         }
         playerRef.current?.addAnimation(name, loop, delay)
@@ -299,7 +308,7 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
 
         currentVisemeRef.current = visemeName
       },
-  }))
+    }))
 
     return (
       <div
@@ -320,7 +329,7 @@ const AnimatedSpineCharacter = forwardRef<AnimatedSpineCharacterHandle, Animated
         }}
       />
     )
-  },
+  }
 )
 
 export default AnimatedSpineCharacter

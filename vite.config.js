@@ -5,10 +5,10 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import path from 'path'
 import fs from 'fs'
 
-const sdkPath = path.resolve(__dirname, '../ug-js-sdk/src');
-const isSdkPathExists = fs.existsSync(sdkPath);
+const sdkPath = path.resolve(__dirname, '../ug-js-sdk/src')
+const isSdkPathExists = fs.existsSync(sdkPath)
 if (isSdkPathExists) {
-  console.log("Found local SDK under ../ug-js-sdk - prioritizing it");
+  console.log('Found local SDK under ../ug-js-sdk - prioritizing it')
 }
 
 // https://vitejs.dev/config/
@@ -19,24 +19,27 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: path.resolve(__dirname, 'node_modules/@ricky0123/vad-web/dist/vad.worklet.bundle.min.js'),
-          dest: 'static/binaries'
+          src: path.resolve(
+            __dirname,
+            'node_modules/@ricky0123/vad-web/dist/vad.worklet.bundle.min.js'
+          ),
+          dest: 'static/binaries',
         },
         {
           src: path.resolve(__dirname, 'node_modules/@ricky0123/vad-web/dist/*.onnx'),
-          dest: 'static/binaries'
+          dest: 'static/binaries',
         },
         {
           src: path.resolve(__dirname, 'node_modules/onnxruntime-web/dist/*.wasm'),
-          dest: 'static/binaries'
-        }
-      ]
-    })
+          dest: 'static/binaries',
+        },
+      ],
+    }),
   ],
   resolve: {
     alias: {
-      ...(isSdkPathExists && { 'ug-js-sdk': sdkPath })
-    }
+      ...(isSdkPathExists && { 'ug-js-sdk': sdkPath }),
+    },
   },
   optimizeDeps: {
     force: true,
@@ -47,8 +50,8 @@ export default defineConfig({
       output: {
         entryFileNames: `static/js/[name].[hash].js`,
         chunkFileNames: `static/js/[name].[hash].js`,
-        assetFileNames: `static/assets/[name].[hash].[ext]`
-      }
-    }
-  }
+        assetFileNames: `static/assets/[name].[hash].[ext]`,
+      },
+    },
+  },
 })

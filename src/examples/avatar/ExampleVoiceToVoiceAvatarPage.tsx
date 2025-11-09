@@ -1,19 +1,22 @@
-import { Avatar } from './components/Avatar/Avatar';
-import { getAvatarAssets, type AvatarKey } from './components/Avatar/config/avatars';
-import { ApiConfigData } from '../components/ApiConfig';
+import { ExtendedApiConfigData } from 'src/types'
+import { Avatar } from './components/Avatar/Avatar'
+import { getAvatarAssets, type AvatarKey } from './components/Avatar/config/avatars'
 
 interface ExampleAvatarPageProps {
-  apiConfig: ApiConfigData | null;
-  onPlay: () => void;
+  apiConfig: ExtendedApiConfigData | null
+  onPlay: () => void
 }
 
-export default function ExampleVoiceToVoiceAvatarPage({ apiConfig, onPlay }: ExampleAvatarPageProps) {
-  const avatarKey: AvatarKey = 'robot';
-  const imageFrame = undefined;
-  const isEnabledSubtitles = true;
+export default function ExampleVoiceToVoiceAvatarPage({
+  apiConfig,
+  onPlay,
+}: ExampleAvatarPageProps) {
+  const avatarKey: AvatarKey = 'robot'
+  const imageFrame = undefined
+  const isEnabledSubtitles = true
 
   try {
-    const avatarAssets = getAvatarAssets(avatarKey);
+    const avatarAssets = getAvatarAssets(avatarKey)
 
     return (
       <div className="h-full flex flex-col">
@@ -28,8 +31,8 @@ export default function ExampleVoiceToVoiceAvatarPage({ apiConfig, onPlay }: Exa
           />
         )}
       </div>
-    );
+    )
   } catch (error) {
-    return <div className="p-4 text-red-500">Could not find avatar: {avatarKey}</div>;
+    return <div className="p-4 text-red-500">Could not find avatar: {avatarKey}</div>
   }
 }

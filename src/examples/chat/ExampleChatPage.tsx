@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import {
   ConversationManager,
   ConversationConfig,
@@ -6,53 +6,53 @@ import {
   DataEvent,
   ConversationState,
   ConversationError,
-} from 'ug-js-sdk';
-import { PlayButton } from '../components/PlayButton/PlayButton';
-import { ApiConfigData } from '../components/ApiConfig';
-import { useToast } from '../../components/Toast/ToastProvider';
-import { DataMessage } from '../components/DataMessage';
+} from 'ug-js-sdk'
+import { PlayButton } from '../components/PlayButton/PlayButton'
+import { useToast } from '../../components/Toast/ToastProvider'
+import { DataMessage } from '../components/DataMessage'
+import { ExtendedApiConfigData } from 'src/types'
 
 interface AnyUtility {
-  enabled: boolean;
-  [key: string]: any;
+  enabled: boolean
+  [key: string]: any
 }
 
 function getActiveUtilities(utilities?: { [key: string]: AnyUtility } | null): string[] {
   if (!utilities) {
-    return [];
+    return []
   }
 
   return Object.entries(utilities)
     .filter(([, utility]) => utility.enabled)
-    .map(([name]) => name);
+    .map(([name]) => name)
 }
 
-type Sender = 'user' | 'chatbot';
+type Sender = 'user' | 'chatbot'
 
 interface Message {
-  text?: string;
-  data?: Record<string, unknown>;
-  sender: Sender;
-  type: 'text' | 'data';
+  text?: string
+  data?: Record<string, unknown>
+  sender: Sender
+  type: 'text' | 'data'
 }
 
 interface ExampleChatPageProps {
-  apiConfig: ApiConfigData | null;
-  onPlay: () => void;
+  apiConfig: ExtendedApiConfigData | null
+  onPlay: () => void
 }
 
 export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPageProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [textInput, setTextInput] = useState('');
-  const conversationManagerRef = useRef<ConversationManager | null>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [hasExperienceStarted, setHasExperienceStarted] = useState(false);
-  const { addToast } = useToast();
+  const [messages, setMessages] = useState<Message[]>([])
+  const [textInput, setTextInput] = useState('')
+  const conversationManagerRef = useRef<ConversationManager | null>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
+  const [hasExperienceStarted, setHasExperienceStarted] = useState(false)
+  const { addToast } = useToast()
 
   useEffect(() => {
     if (!apiConfig) {
-      return;
+      return
     }
     const convConfig: ConversationConfig = {
       capabilities: {
@@ -72,25 +72,28 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
       context: apiConfig.context,
       utilities: apiConfig.utilities,
       voiceProfile: apiConfig.voiceProfile,
-      safetyPolicy: apiConfig.safetyPolicy,
+      safetyPolicy: apiConfig.safety_policy,
       hooks: {
         onTextMessage: (event: TextEvent) => {
           setMessages((prevMessages) => {
-            const lastMessage = prevMessages[prevMessages.length - 1];
+            const lastMessage = prevMessages[prevMessages.length - 1]
             if (lastMessage && lastMessage.sender === 'chatbot' && lastMessage.type === 'text') {
-              const newMessages = [...prevMessages];
-              newMessages[newMessages.length - 1] = { ...lastMessage, text: (lastMessage.text || '') + event.text };
-              return newMessages;
+              const newMessages = [...prevMessages]
+              newMessages[newMessages.length - 1] = {
+                ...lastMessage,
+                text: (lastMessage.text || '') + event.text,
+              }
+              return newMessages
             } else {
-              return [...prevMessages, { type: 'text', text: event.text, sender: 'chatbot' }];
+              return [...prevMessages, { type: 'text', text: event.text, sender: 'chatbot' }]
             }
-          });
+          })
         },
         onDataMessage: (event: DataEvent) => {
           setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'data', data: event.data, sender: 'chatbot' },
-          ]);
+          ])
         },
         onStateChange: (state: ConversationState) => {},
         onError: (error: ConversationError) => {
@@ -99,43 +102,43 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
         onAvatarAnimationChanged: () => {},
         onNetworkStatusChange: () => {},
       },
-    };
-    conversationManagerRef.current = new ConversationManager(convConfig);
+    }
+    conversationManagerRef.current = new ConversationManager(convConfig)
 
     return () => {
       // conversationManagerRef.current?.destroy();
-    };
-  }, [apiConfig]);
+    }
+  }, [apiConfig])
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
-  }, [messages]);
+  }, [messages])
 
   const handleSend = () => {
     if (textInput.trim()) {
-      setMessages([...messages, { type: 'text', text: textInput, sender: 'user' }]);
-      const activeUtilities = getActiveUtilities(apiConfig?.utilities);
+      setMessages([...messages, { type: 'text', text: textInput, sender: 'user' }])
+      const activeUtilities = getActiveUtilities(apiConfig?.utilities)
       conversationManagerRef.current?.interact({
         uid: '',
         kind: 'interact',
         type: 'stream',
         text: textInput,
         on_output: activeUtilities,
-      });
-      setTextInput('');
+      })
+      setTextInput('')
     }
-  };
+  }
 
   const handlePlayButtonClick = async () => {
     if (!hasExperienceStarted) {
-      onPlay?.();
-      setHasExperienceStarted(true);
-      await conversationManagerRef.current?.initialize();
-      textAreaRef.current?.focus();
+      onPlay?.()
+      setHasExperienceStarted(true)
+      await conversationManagerRef.current?.initialize()
+      textAreaRef.current?.focus()
     }
-  };
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -166,8 +169,8 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
                   msg.sender === 'user'
                     ? 'bg-blue-500 text-white self-end'
                     : msg.type === 'data'
-                    ? 'bg-purple-100 self-start'
-                    : 'bg-gray-200 text-black self-start'
+                      ? 'bg-purple-100 self-start'
+                      : 'bg-gray-200 text-black self-start'
                 }`}
               >
                 {msg.type === 'text' && msg.text}
@@ -182,8 +185,8 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
               onChange={(e) => setTextInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSend();
+                  e.preventDefault()
+                  handleSend()
                 }
               }}
               placeholder="Type a message..."
@@ -202,5 +205,5 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
         </div>
       )}
     </div>
-  );
+  )
 }

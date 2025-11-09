@@ -17,5 +17,4 @@ The primary goal of this project is to provide developers with a clear understan
 
 - `ug-js-sdk`: The core library providing the functionalities demonstrated here.
 
-
 Please ignore anything under .history/ folder
