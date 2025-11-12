@@ -266,6 +266,7 @@ export const Avatar: React.FC<AvatarProps> = ({
             showTapToPlay={true}
             hasExperienceStarted={hasExperienceStarted}
             isPlaybackPaused={isPlaybackPaused}
+            disabled={!isTextOnly && isAudioPlaying}
           />
         </div>
       </div>
@@ -310,6 +311,7 @@ export const Avatar: React.FC<AvatarProps> = ({
               hasExperienceStarted={hasExperienceStarted}
               isPlaybackPaused={isPlaybackPaused}
               className="w-20 h-20"
+              disabled={!isTextOnly && isAudioPlaying}
             />
           </div>
         )}
