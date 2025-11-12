@@ -9,6 +9,7 @@ interface PlayButtonProps {
   hasExperienceStarted?: boolean
   isPlaybackPaused: boolean
   className?: string
+  disabled?: boolean
 }
 
 export const PlayButton: React.FC<PlayButtonProps> = ({
@@ -19,10 +20,12 @@ export const PlayButton: React.FC<PlayButtonProps> = ({
   hasExperienceStarted = false,
   isPlaybackPaused,
   className = 'w-24 h-24',
+  disabled = false,
 }) => {
   // Generate unique ID for this component instance to avoid SVG gradient conflicts
   const uniqueId = React.useMemo(() => Math.random().toString(36).substr(2, 9), [])
   const handleClick = () => {
+    if (disabled) return;
     onClick()
   }
 
@@ -40,7 +43,7 @@ export const PlayButton: React.FC<PlayButtonProps> = ({
   return (
     <div
       className={`relative z-30 flex flex-col items-center ${
-        hasExperienceStarted ? 'cursor-pointer' : 'cursor-pointer'
+        disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
       }`}
       onClick={handleClick}
     >

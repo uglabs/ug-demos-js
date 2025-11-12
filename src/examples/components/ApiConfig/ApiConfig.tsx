@@ -56,8 +56,16 @@ export const ApiConfig: React.FC<ApiConfigProps> = ({
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const newConfig = JSON.parse(content);
-        onConfigChange(newConfig);
+        const importedConfig = JSON.parse(content);
+        if (config) {
+          const mergedConfig = {
+            ...importedConfig,
+            apiUrl: config.apiUrl,
+            apiKey: config.apiKey,
+            federatedId: config.federatedId,
+          };
+          onConfigChange(mergedConfig);
+        }
       } catch (error) {
         console.error('Error parsing JSON file:', error);
         alert('Invalid JSON file.');
