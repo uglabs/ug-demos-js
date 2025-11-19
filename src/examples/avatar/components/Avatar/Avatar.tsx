@@ -191,12 +191,16 @@ export const Avatar: React.FC<AvatarProps> = ({
         },
       },
     }
-    conversationManagerRef.current = new ConversationManager(convConfig)
+    if (!conversationManagerRef.current) {
+      conversationManagerRef.current = new ConversationManager(convConfig)
+    } else {
+      conversationManagerRef.current.updateConfig(convConfig)
+    }
 
     return () => {
-      // conversationManagerRef.current?.destroy();
+      conversationManagerRef.current?.destroy()
     }
-  }, [config, imageFrame, addToast])
+  }, [config, imageFrame, addToast, isTextOnly])
 
   return (
     <div className="flex flex-col flex-grow w-full relative">
@@ -266,7 +270,6 @@ export const Avatar: React.FC<AvatarProps> = ({
             showTapToPlay={true}
             hasExperienceStarted={hasExperienceStarted}
             isPlaybackPaused={isPlaybackPaused}
-            disabled={!isTextOnly && isAudioPlaying}
           />
         </div>
       </div>
@@ -311,7 +314,6 @@ export const Avatar: React.FC<AvatarProps> = ({
               hasExperienceStarted={hasExperienceStarted}
               isPlaybackPaused={isPlaybackPaused}
               className="w-20 h-20"
-              disabled={!isTextOnly && isAudioPlaying}
             />
           </div>
         )}

@@ -11,6 +11,21 @@ if (isSdkPathExists) {
   console.log('Found local SDK under ../ug-js-sdk - prioritizing it')
 }
 
+// Helper to determine source of audio-player-processor.js
+function getAudioProcessorSource() {
+  // Prefer local SDK's build output if available
+  const localDistPath = path.resolve(__dirname, '../ug-js-sdk/public/dist/audio-player-processor.js')
+  const externalDistPath = path.resolve(__dirname, 'node_modules/ug-js-sdk/public/dist/audio-player-processor.js')
+  if (fs.existsSync(localDistPath)) {
+    return localDistPath
+  }
+  if (fs.existsSync(externalDistPath)) {
+    return externalDistPath
+  }
+  // Otherwise fall back to local even if it doesn't exist (for dev), to fail loudly
+  return localDistPath
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -33,6 +48,10 @@ export default defineConfig({
           src: path.resolve(__dirname, 'node_modules/onnxruntime-web/dist/*.wasm'),
           dest: 'static/binaries',
         },
+        {
+          src: getAudioProcessorSource(),
+          dest: 'dist'
+        }
       ],
     }),
   ],
