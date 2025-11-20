@@ -106,9 +106,10 @@ export default function ExampleChatPage({ apiConfig, onPlay }: ExampleChatPagePr
     conversationManagerRef.current = new ConversationManager(convConfig)
 
     return () => {
-      // conversationManagerRef.current?.destroy();
+      conversationManagerRef.current?.destroy()
     }
-  }, [apiConfig])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(apiConfig), addToast])
 
   useEffect(() => {
     if (chatContainerRef.current) {
