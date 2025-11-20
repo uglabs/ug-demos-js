@@ -5,7 +5,7 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 import path from 'path'
 import fs from 'fs'
 
-const sdkPath = path.resolve(__dirname, '../ug-js-sdk/src')
+const sdkPath = path.resolve(__dirname, '../ug-js-sdk')
 const isSdkPathExists = fs.existsSync(sdkPath)
 if (isSdkPathExists) {
   console.log('Found local SDK under ../ug-js-sdk - prioritizing it')
@@ -57,7 +57,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      ...(isSdkPathExists && { 'ug-js-sdk': sdkPath }),
+      ...(isSdkPathExists && { 'ug-js-sdk': path.resolve(sdkPath, 'dist/ug-js-sdk.mjs') }),
     },
   },
   optimizeDeps: {
